@@ -56,8 +56,7 @@ app.post("/generate", async function(req, res) {
       failMalformed(res);
       return;
     }
-
-    await fs.writeFile(directory + "/" + name, new Buffer(content, "base64"), function(err) {});
+    await fs.writeFile(directory + "/" + name, Buffer.from(content, "base64"), function(err) { });
   }
 
   var mainfile = req.body.mainfile;
@@ -71,18 +70,20 @@ app.post("/generate", async function(req, res) {
   var relaxed = spawn("relaxed", [directory + "/" + mainfile + "." + mainfileExtension, "--build-once"]);
 
   relaxed.on("close", code => {
-    var fileName = directory + "/" + mainfile + ".pdf";
+    // TODO: Check if file exists else return internal server error.
 
-    res.status(200).sendFile(fileName);
-
-    cleanup();
+    if (code == 0) {
+      var fileName = directory + "/" + mainfile + ".pdf";
+      res.status(200).sendFile(fileName, function(err) {
+        cleanup()
+      })
+    } else {
+      failServerError(res)
+      cleanup()
+    }
   });
 
-  relaxed.on("error", err => {
-    cleanup();
-
-    failServerError();
-  })
+  relaxed.on("error", err => { });
 });
 
 app.listen(8000, function() {
