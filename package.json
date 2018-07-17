@@ -1,0 +1,16 @@
+{
+  "name": "pdfmaster",
+  "version": "0.1.0",
+  "description": "A pdf master",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "PDF Master Inc.",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "uuid": "^3.3.2"
+  }
+}
