@@ -3,6 +3,7 @@ let bodyParser = require('body-parser');
 let uuidv4 = require("uuid/v4");
 let fs = require("fs");
 let { spawn } = require("child_process");
+let apikeyhelper = require('./apikeyhelper');
 
 var app = express();
 app.use(bodyParser.json());
@@ -13,6 +14,11 @@ app.use(function(req, res, next) {
     res.status(400).json({ status: 400, error: true, reason: "Content-Type must be application/json" });
     return;
   }
+  if (!apikeyhelper.verifyApiKey(req.headers["x-api-key"])) {
+    res.status(401).json({ status: 401, error: true, reason: "Unauthorized"})
+    return;
+  }
+
   next();
 });
 
