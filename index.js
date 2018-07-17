@@ -14,8 +14,14 @@ app.use(function(req, res, next) {
     res.status(400).json({ status: 400, error: true, reason: "Content-Type must be application/json" });
     return;
   }
+
+  next();
+});
+
+app.use(function(req, res, next) {
+  "use strict";
   if (!apikeyhelper.verifyApiKey(req.headers["x-api-key"])) {
-    res.status(401).json({ status: 401, error: true, reason: "Unauthorized"})
+    res.status(401).json({ status: 401, error: true, reason: "Unauthorized"});
     return;
   }
 
@@ -81,18 +87,19 @@ app.post("/generate", async function(req, res) {
     if (code == 0) {
       var fileName = directory + "/" + mainfile + ".pdf";
       res.status(200).sendFile(fileName, function(err) {
-        cleanup()
+        cleanup();
       })
     } else {
-      failServerError(res)
-      cleanup()
+      failServerError(res);
+      cleanup();
     }
   });
 
   relaxed.on("error", err => { });
 });
 
-app.listen(8000, function() {
+var port = process.env.PORT || 8000;
+app.listen(port, function() {
   "use strict";
   console.log("Listening...");
 });
