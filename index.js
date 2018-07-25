@@ -79,7 +79,12 @@ app.post("/generate", async function(req, res) {
     return;
   }
 
-  var relaxed = spawn("relaxed", [directory + "/" + mainfile + "." + mainfileExtension, "--build-once"]);
+  var commandElements = [directory + "/" + mainfile + "." + mainfileExtension, "--build-once"]
+  if (req.body.locals) {
+    var variables = JSON.stringify(req.body.locals)
+    commandElements.push(["--locals", variables])
+  }
+  var relaxed = spawn("relaxed", commandElements);
 
   relaxed.on("close", code => {
     // TODO: Check if file exists else return internal server error.
