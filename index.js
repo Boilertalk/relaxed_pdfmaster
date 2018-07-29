@@ -4,13 +4,15 @@ let uuidv4 = require("uuid/v4");
 let fs = require("fs");
 let { spawn } = require("child_process");
 let apikeyhelper = require('./apikeyhelper');
+let cors = require('cors');
 
 var app = express();
 app.use(bodyParser.json());
+app.use(cors());
 
 app.use(function(req, res, next) {
   "use strict";
-  if (req.headers["content-type"].toLowerCase() !== "application/json") {
+  if (!req.headers["content-type"] || req.headers["content-type"].toLowerCase() !== "application/json") {
     res.status(400).json({ status: 400, error: true, reason: "Content-Type must be application/json" });
     return;
   }
