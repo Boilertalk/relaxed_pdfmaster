@@ -83,10 +83,22 @@ app.post("/generate", async function(req, res) {
 
   var commandElements = [directory + "/" + mainfile + "." + mainfileExtension, "--build-once"]
   if (req.body.locals) {
-    var variables = JSON.stringify(req.body.locals)
-    commandElements.push(["--locals", variables])
+    function addslashes(str) {
+        return (str + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
+    }
+
+    var variables = JSON.stringify(req.body.locals);
+    commandElements.push("--locals");
+    commandElements.push(variables);
   }
   var relaxed = spawn("relaxed", commandElements);
+
+  relaxed.stdout.on('data', function(data) {
+      console.info('relaxed stdout: ' + data);
+  });
+  relaxed.stderr.on('data', function(data) {
+      console.error('relaxed stderr: ' + data);
+  });
 
   relaxed.on("close", code => {
     // TODO: Check if file exists else return internal server error.
@@ -94,6 +106,9 @@ app.post("/generate", async function(req, res) {
     if (code == 0) {
       var fileName = directory + "/" + mainfile + ".pdf";
       res.status(200).sendFile(fileName, function(err) {
+        if (err) {
+          failServerError(res);
+        }
         cleanup();
       })
     } else {
