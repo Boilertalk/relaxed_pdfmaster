@@ -23,7 +23,7 @@ app.use(function(req, res, next) {
 app.use(function(req, res, next) {
   "use strict";
   if (!apikeyhelper.verifyApiKey(req.headers["x-api-key"])) {
-    res.status(401).json({ status: 401, error: true, reason: "Unauthorized"});
+    res.status(401).json({ status: 401, error: true, reason: "Unauthorized" });
     return;
   }
 
