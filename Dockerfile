@@ -1,4 +1,4 @@
-FROM node:10.14.1-jessie-slim
+FROM node:10.15.3-jessie-slim
 
 # download relaxed dependencies
 RUN apt-get update
